@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>Keypoint: PhoneGap + Backbone</title>
+    <link href="topcoat/css/topcoat-mobile-light.min.css" rel="stylesheet" type="text/css">
+    <link href="css/keypoint.css" rel="stylesheet" type="text/css">
+    <link href="css/prettify.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-721308-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+</head>
+
+<body>
+
+<img id="logo" src="images/adobe.svg"/>
+
+<div id="wrapper"></div>
+
+<div id="slides">
+
+<div class="slide">
+    <img src="images/title.png" class="full"/>
+ </div>
+
+<div class="slide">
+    <h1>Me</h1>
+    <div style="text-align: left">
+        <p><span class="topcoat-icon icon--user"></span>Christophe Coenraets</p>
+        <p><span class="topcoat-icon icon--location"></span>Boston, MA</p>
+        <p><span class="topcoat-icon icon--twitter"></span>@ccoenraets</p>
+        <p><span class="topcoat-icon icon--rss"></span>http://coenraets.org</p>
+        <p><span class="topcoat-icon icon--github"></span>https://github.com/ccoenraets</p>
+    </div>
+</div>
+
+<div class="slide">
+    <h1 style="padding-bottom: 10px;">You</h1>
+    <img id="audience-pic"/>
+    <button class="topcoat-button picture-btn"><span class="topcoat-icon icon--camera"></span></button>
+</div>
+
+<div class="slide">
+    <h1>What is PhoneGap?</h1>
+    <img src="images/wrapper-bridge.png" class="full"/><br/>
+</div>
+
+<div class="slide">
+    <h1>Package web apps as mobile apps?</h1>
+    <img src="images/sitemap.gif" class="full" />
+</div>
+
+<div class="slide">
+<h1>New School: Single Page Application</h1>
+<xmp class="prettyprint large"><html>
+<head>
+    <title>My App</title>
+    <script src="app.js"></script>
+</head>
+<body></body>
+</html>
+</xmp>
+</div>
+
+<div class="slide">
+    <h1>Multi-Page vs Single-Page Architecture</h1>
+    <table style="width: 900px;">
+        <thead>
+        <tr>
+            <td></td>
+            <td>Multi-Page</td>
+            <td>Single-Page</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="fragment">
+            <td>UI Generation Tier</td>
+            <td>Server-Side</td>
+            <td>Client-Side</td>
+        </tr>
+        <tr class="fragment">
+            <td>Language</td>
+            <td>Java, .NET, PHP, RoR</td>
+            <td>JavaScript</td>
+        </tr>
+        <tr class="fragment">
+            <td>Offline Support</td>
+            <td>Limited</td>
+            <td>Yes</td>
+        </tr>
+        <tr class="fragment">
+            <td>Page Transitions</td>
+            <td>Browser</td>
+            <td>Developer</td>
+        </tr>
+        <tr class="fragment">
+            <td>Performance</td>
+            <td>Laggy</td>
+            <td>Fast</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="slide">
+    <h1>New Challenges</h1>
+    <ul>
+        <li>Create large, complex apps in JavaScript</li>
+        <li>Avoid problems in a long lived DOM</li>
+        <li>Create complex UI in JavaScript</li>
+    </ul>
+</div>
+
+<div class="slide">
+    <h1>Frameworks Can Help</h1>
+    <img src="images/frameworks.jpg"/>
+</div>
+
+<div class="slide">
+    <h1>Evaluating Frameworks</h1>
+    <table style="width: 900px;">
+        <tr><td></td><td>Scope</td><td>Declarative</td><td>Prescriptive</td><td>Ready</td></tr>
+        <tr><td>jQuery Mobile</td><td><img src="images/veryhigh.png"/></td><td><img src="images/veryhigh.png"/></td><td><img src="images/veryhigh.png"/></td><td><img src="images/veryhigh.png"/></td></tr>
+        <tr><td>Backbone.js</td><td><img src="images/verylow.png"/></td><td><img src="images/verylow.png"/></td><td><img src="images/verylow.png"/></td><td><img src="images/veryhigh.png"/></td></tr>
+        <tr><td>Angular.js</td><td><img src="images/moderate.png"/></td><td><img src="images/veryhigh.png"/></td><td><img src="images/high.png"/></td><td><img src="images/veryhigh.png"/></td></tr>
+        <tr><td>Ember</td><td><img src="images/low.png"/></td><td><img src="images/low.png"/></td><td><img src="images/high.png"/></td><td><img src="images/moderate.png"/></td></tr>
+    </table>
+</div>
+
+
+<div class="slide">
+    <img src="images/backbone.png"/>
+</div>
+
+<div class="slide">
+    <h1>What is Backbone.js?</h1>
+    A lightweight JavaScript framework<br/>
+    that provides the basic infrastructure<br/>
+    to bring structure to your Web applications.
+</div>
+
+<div class="slide">
+<h1>Router</h1>
+<pre class="prettyprint small">
+var Router = Backbone.Router.extend({
+
+    routes: {
+        "":             "home",
+        "products/:id": "productDetails"
+    },
+
+    home: function () {
+        this.homeView = new HomeView();
+    },
+
+    productDetails: function (id) {
+        this.productView = new ProductView();
+    }
+
+});
+</pre>
+</div>
+
+<div class="slide">
+<h1>Model</h1>
+<pre class="prettyprint">
+var Product = Backbone.Model.extend({
+
+    urlRoot: "http://localhost:3000/products"
+
+});
+</pre>
+</div>
+
+
+<div class="slide">
+<h1>Collection</h1>
+<pre class="prettyprint">
+var ProductCollection = Backbone.Collection.extend({
+
+    model: Product,
+
+    url: "http://localhost:3000/products"
+
+});
+</pre>
+</div>
+
+
+<div class="slide">
+    <h1>Models and REST</h1>
+    <table style="width: 950px;font-size: 30px;">
+        <thead>
+        <tr>
+            <td>Operation</td>
+            <td>Backbone</td>
+            <td>HTTP Method</td>
+            <td>URL</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="fragment">
+            <td style="text-align: left">Get all </td>
+            <td style="text-align: left">collection.fetch()</td>
+            <td>GET</td>
+            <td style="text-align: left">/products</td>
+        </tr>
+        <tr>
+            <td style="text-align: left">Get one</td>
+            <td style="text-align: left">model.fetch()</td>
+            <td>GET</td>
+            <td style="text-align: left">/products/101</td>
+        </tr>
+        <tr>
+            <td style="text-align: left">Add</td>
+            <td style="text-align: left">model.save()</td>
+            <td>POST</td>
+            <td style="text-align: left">/products</td>
+        </tr>
+        <tr>
+            <td style="text-align: left">Update (whole)</td>
+            <td style="text-align: left">model.save()</td>
+            <td>PUT</td>
+            <td style="text-align: left">/products/101</td>
+        </tr>
+        <tr>
+            <td style="text-align: left">Update (fields)</td>
+            <td style="text-align: left">model.save()</td>
+            <td>PATCH</td>
+            <td style="text-align: left">/products/101</td>
+        </tr>
+        <tr>
+            <td style="text-align: left">Delete</td>
+            <td style="text-align: left">model.destroy()</td>
+            <td>DELETE</td>
+            <td style="text-align: left">/products/101</td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+
+<div class="slide">
+<h1>Modelling Associations</h1>
+<pre class="prettyprint small">
+var Employee = Backbone.Model.extend({
+
+    urlRoot: "http://localhost:3000/employees",
+
+    initialize: function () {
+        this.reports = new EmployeeCollection();
+        this.reports.url = this.urlRoot + "/" + this.id + "/reports";
+    }
+
+});
+</pre>
+</div>
+
+<div class="slide">
+    <h1>Pluggable Data Adapters</h1>
+    <div class="grid">
+        <div class="grid-cell">App</div>
+    </div>
+
+    <div style="display: flex" class="grid">
+        <div class="grid-cell">Data Interface</div>
+    </div>
+
+    <div style="display: flex" class="grid">
+        <div class="grid-cell">Ajax/JSON</div>
+        <div class="grid-cell">Memory</div>
+        <div class="grid-cell">LocalStorage</div>
+        <div class="grid-cell">WebSQL</div>
+    </div>
+</div>
+
+
+<div class="slide">
+<h1>sync() example</h1>
+<pre class="prettyprint">
+var Product = Backbone.Model.extend({
+
+   sync: function (method, model, options) {
+       if (method === "read") {
+           adapter.findById(this.id).done(function(data) {
+               options.success(data);
+           });
+       } else if (method === "create") {
+           adapter.addItem(this.attributes);
+           this.id = this.get("id");
+       }
+   }
+
+});
+</pre>
+</div>
+
+
+<div class="slide">
+    <h1>View</h1>
+<pre class="prettyprint small">
+var ProductView = Backbone.View.extend({
+
+    initialize: function () {
+        this.template = [...];
+        this.render();
+    },
+
+    render: function () {
+        this.$el.html(this.template(this.model.toJSON()));
+        return this;
+    },
+
+    events: {
+        "click .save": "save"
+    },
+
+    save: function () {
+    }
+
+});
+</pre>
+</div>
+
+<div class="slide">
+    <h1>View Granularity</h1>
+    <img src="images/geometrixx.jpg" style="height: 600px;width: 428px; border: solid 4px red"/>
+</div>
+
+<div class="slide">
+    <h1>View Granularity</h1>
+    <div style="background: url('images/geometrixx.jpg'); height: 600px;width: 428px;position: relative;">
+        <div style="position: absolute;left: 0;right: 0; height: 84px; border: solid 4px red"></div>
+        <div style="position: absolute;left: 0;right: 0; top: 94px; height: 80px; border: solid 4px red"></div>
+        <div style="position: absolute;left: 0;right: 0; top: 184px; bottom:0px; border: solid 4px red"></div>
+    </div>
+</div>
+
+<div class="slide">
+    <h1>View Granularity</h1>
+    <div style="background: url('images/geometrixx.jpg'); height: 600px;width: 428px;position: relative;">
+        <div style="position: absolute;left: 0;right: 0; height: 84px; border: solid 4px red"></div>
+        <div style="position: absolute;left: 0;right: 0; top: 94px; height: 80px; border: solid 4px red"></div>
+        <div style="position: absolute;left: 0;right: 0; top: 184px; bottom:0px; border: solid 4px red">
+            <div style="width: 100%; height:90px; margin: 2px; width: 408px; border: solid 4px green"></div>
+            <div style="width: 100%; height:92px; margin: 2px; width: 408px; border: solid 4px green"></div>
+            <div style="width: 100%; height:92px; margin: 2px; width: 408px; border: solid 4px green"></div>
+            <div style="width: 100%; height:92px; margin: 2px; width: 408px; border: solid 4px green"></div>
+        </div>
+    </div>
+</div>
+
+<div class="slide">
+<h1>Partial Rendering</h1>
+<pre class="prettyprint small">
+var ProductListItem = Backbone.View.extend({
+
+    initialize: function () {
+        this.model.on("change", this.render);
+        this.render();
+    },
+
+    render: function () {
+
+    }
+
+});
+</pre>
+</div>
+
+
+<div class="slide">
+    <h1>Backbone.js + Topcoat</h1>
+    <div class="topcoat-navigation-bar">
+        <div class="topcoat-navigation-bar__item left quarter">
+            <a class="topcoat-icon-button--quiet">
+                <span class="topcoat-icon topcoat-icon--menu-stack"></span>
+            </a>
+        </div>
+        <div class="topcoat-navigation-bar__item center half">
+            <h1 class="topcoat-navigation-bar__title">Header</h1>
+        </div>
+        <div class="topcoat-navigation-bar__item right quarter">
+            <a class="topcoat-icon-button--quiet">
+                <span class="topcoat-icon topcoat-icon--edit"></span>
+            </a>
+        </div>
+    </div>
+
+    <div style="padding-top:20px;padding-bottom:20px;">
+        <input type="search"  value="" placeholder="search" class="topcoat-search-input--large">
+        <a class="topcoat-button--large--cta" >Button</a>
+        <a class="topcoat-button--large--cta is-active" >Button</a>
+        <a class="topcoat-button--large--cta is-disabled" >Button</a>
+
+        <a class="topcoat-icon-button--large"><span class="topcoat-icon--large topcoat-icon--menu-stack"></span></a>
+        <a class="topcoat-icon-button--large is-active"><span class="topcoat-icon--large topcoat-icon--menu-stack"></span></a>
+        <a class="topcoat-icon-button--large is-disabled"><span class="topcoat-icon--large topcoat-icon--menu-stack"></span></a>
+    </div>
+
+    <div class="topcoat-list__container" style="border-bottom: none">
+        <h3 class="topcoat-list__header">Category</h3>
+        <ul class="topcoat-list">
+            <li class="topcoat-list__item">
+                Item
+            </li>
+            <li class="topcoat-list__item">
+                Item
+            </li>
+            <li class="topcoat-list__item">
+                Item
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="slide">
+    <h1>http://topcoat.io</h1>
+    <h1>https://github.com/topcoat/topcoat</h1>
+</div>
+
+
+<div class="slide">
+<h1>Building HTML with JavaScript</h1>
+<xmp class="prettyprint xsmall">var html =
+'<div class="topcoat-navigation-bar">' +
+    '<div class="topcoat-navigation-bar__item left quarter">' +
+        '<a class="topcoat-icon-button--quiet back-button" href="#">' +
+            '<span class="topcoat-icon topcoat-icon--back"></span>' +
+        '</a>' +
+    '</div>' +
+    '<div class="topcoat-navigation-bar__item center half">' +
+        '<h1 class="topcoat-navigation-bar__title">Geometrixx</h1>' +
+    '</div>' +
+'</div>' +
+'<div class="page-body scroller">' +
+    '<img class="small-pic" src="../assets/img/' + product.smallPic + '" />' +
+    '<h1 class="product-name">' + product.name + '</h1>' +
+    '<h2 class="category">' + product.category + '</h2>' +
+    '<img src="../assets/css/images/star' + product.rating + '.png" />' +
+    '<h2 class="price">' + product.price + '</h2>' +
+    '<a class="topcoat-icon-button topcoat-button--cta">' +
+    '<span class="topcoat-icon icon-facebook"></span>' +
+    '</a> ' +
+    '<a class="topcoat-icon-button topcoat-button--cta">' +
+    '<span class="topcoat-icon icon-twitter"></span>' +
+    '</a>' +
+'</div>';
+</xmp>
+</div>
+
+<div class="slide">
+<h1>Using Templates</h1>
+<xmp class="prettyprint xsmall"><div class="topcoat-navigation-bar">
+    <div class="topcoat-navigation-bar__item left quarter">
+        <a class="topcoat-icon-button--quiet back-button" href="#">
+            <span class="topcoat-icon topcoat-icon--back"></span>
+        </a>
+    </div>
+    <div class="topcoat-navigation-bar__item center half">
+        <h1 class="topcoat-navigation-bar__title">Geometrixx</h1>
+    </div>
+</div>
+<div class="page-body scroller">
+    <img class="small-pic" src="assets/img/{{this.smallPic}}"/>
+    <h1 class="product-name">{{this.name}}</h1>
+    <h2 class="category">{{this.category}}</h2>
+    <img src="assets/css/images/star{{this.rating}}.png"/>
+    <h2 class="price">{{this.price}}</h2>
+    <a class="topcoat-icon-button topcoat-button--cta facebook-button">
+        <span class="topcoat-icon icon-facebook"></span>
+    </a>
+    <a class="topcoat-icon-button topcoat-button--cta twitter-button">
+        <span class="topcoat-icon icon-twitter"></span>
+    </a>
+</div>
+</xmp>
+</div>
+
+<div class="slide">
+    <h1>Templates</h1>
+    <ul>
+        <li>Underscore.js</li>
+        <li>Handlebars.js</li>
+        <li>Mustache.js</li>
+    </ul>
+</div>
+
+<div class="slide">
+    <h1>Loading Templates</h1>
+    <ol><li><xmp class="prettyprint"><script type="text/template"></script></xmp></li>
+        <li>#1 injected during build process (Grunt)</li>
+        <li>Custom template loader</li>
+        <li>Require.js with text plugin</li>
+    </ol>
+</div>
+
+<div class="slide">
+    <h1>Modules</h1>
+    <img src="images/modules.jpg"/>
+</div>
+
+<div class="slide">
+<h1>JavaScript Module Pattern</h1>
+<pre class="prettyprint small">
+var app = (function () {
+
+    var rootURL = "http://myapp.com/staging",
+        databaseName = "productdb_staging";
+
+    function init() {
+    }
+
+    function start() {
+    }
+
+    return {
+        init: init,
+        start: start
+    };
+
+}());
+</pre>
+</div>
+
+<div class="slide">
+<h1>Script Loading</h1>
+<xmp class="prettyprint"><script src="lib/jquery.js"></script>
+<script src="lib/handlebars.js"></script>
+<script src="js/app.js"></script>
+<script src="js/Home.js"></script>
+<script src="js/Products.js"></script>
+<script src="js/Comments.js"></script>
+<script src="js/AddComment.js"></script>
+<script src="js/Map.js"></script>
+<script src="js/Logon.js"></script>
+<script src="js/Logout.js"></script>
+<script src="js/Settings.js"></script>
+<script src="js/adapters/product.js"></script>
+<script src="js/template-loader.js"></script>
+</xmp>
+</div>
+
+<div class="slide">
+<img src="images/requirejs.jpg" class="large" />
+</div>
+
+
+<div class="slide">
+<h1>Managing Dependencies</h1>
+<pre class="prettyprint">
+define(function (require) {
+
+    "use strict";
+
+    var $           = require('jquery'),
+        Product     = require('app/models/Product'),
+        HomeView    = require("app/views/HomeView"),
+
+        homeView = new HomeView();
+
+}
+</pre>
+</div>
+
+</div> <!-- end of '#slides' -->
+
+<a id="menu-btn" class="topcoat-icon-button--quiet">
+    <span class="topcoat-icon topcoat-icon--menu-stack"></span>
+</a>
+
+<div id="menu">
+    <div class="header">
+        <img src="css/img/keypoint.png"/>
+        <div class="title">Keypoint</div>
+    </div>
+    <div class="topcoat-list__container scroller cf">
+        <ol id="list" class="topcoat-list"></ol>
+    </div>
+</div>
+
+<script src="cordova.js"></script>
+<script src="lib/fastclick.js"></script>
+<script src="lib/prettify.js"></script>
+<script src="lib/swipeview.js"></script>
+<script src="lib/jquery.js"></script>
+<script src="js/keypoint.js"></script>
+<script src="js/slides.js"></script>
+</body>
+</html>
